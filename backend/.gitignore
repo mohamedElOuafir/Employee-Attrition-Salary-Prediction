@@ -1,0 +1,18 @@
+
+venv/
+.env
+
+
+__pycache__/
+*.pyc
+
+
+dataset_unifie
+dataset_plantes
+
+models/
+.pkl
+
+# Ignorer les configurations IDE
+.idea/
+.vscode/
