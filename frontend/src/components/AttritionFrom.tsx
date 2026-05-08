@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Label, SectionTitle, FormGrid, Input, Select, RatingSelect } from "./FromsComponents";
 import { ResultBadge } from "./ResultBadge";
 import {SearchCheck } from "lucide-react"; 
+import type { AttritionEmployee } from "../models/interaces";
 
 
 const DEPARTMENTS = ["Research & Development", "Sales", "Human Resources"];
@@ -31,23 +32,51 @@ export const AttritionForm = () => {
 
     const set = (k: any) => (e: any) => setForm((f) => ({ ...f, [k]: isNaN(e.target.value) ? e.target.value : Number(e.target.value) || e.target.value }));
 
-    const payload = () => {
-        const { MonthlyIncome: _m, ...rest } = form;
-    return rest;
-    };
+
 
     const handleSubmit = async () => {
         setLoading(true);
         setResult(null);
-        console.log(JSON.stringify(payload()))
+        
+
+        const attritionEmployee: AttritionEmployee = {
+            Age: form.Age,
+            BusinessTravel: form.BusinessTravel,
+            Department: form.Department,
+            DistanceFromHome: form.DistanceFromHome,
+            Education: form.Education,
+            EducationField: form.EducationField,
+            EnvironmentSatisfaction: form.EnvironmentSatisfaction,
+            Gender: form.Gender,
+            JobInvolvement: form.JobInvolvement,
+            JobLevel: form.JobLevel,
+            JobRole: form.JobRole,
+            JobSatisfaction: form.JobSatisfaction,
+            MaritalStatus: form.MaritalStatus,
+            MonthlyIncome: form.MonthlyIncome,
+            NumCompaniesWorked: form.NumCompaniesWorked,
+            OverTime: form.OverTime,
+            PercentSalaryHike: form.PercentSalaryHike,
+            RelationshipSatisfaction: form.RelationshipSatisfaction,
+            StockOptionLevel: form.StockOptionLevel,
+            TotalWorkingYears: form.TotalWorkingYears,
+            TrainingTimesLastYear: form.TrainingTimesLastYear,
+            WorkLifeBalance: form.WorkLifeBalance,
+            YearsAtCompany: form.YearsAtCompany,
+            YearsInCurrentRole: form.YearsInCurrentRole,
+            YearsSinceLastPromotion: form.YearsSinceLastPromotion,
+            YearsWithCurrManager: form.YearsWithCurrManager
+        }
         try {
+            console.log(attritionEmployee)
             const res = await fetch("http://localhost:8000/attrition/predict", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload()),
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(attritionEmployee),
             });
             const data = await res.json();
-            setResult(data.prediction_label);
+            console.log(data)
+            setResult(data);
         } catch {
             console.log("error fetching results")
         } finally {
@@ -100,6 +129,10 @@ export const AttritionForm = () => {
                 <Select value={form.EducationField} onChange={set("EducationField")}>
                     {EDUCATION_FIELDS.map(f => <option key={f}>{f}</option>)}
                 </Select>
+            </div>
+            <div>
+                <Label>Salaire</Label>
+                <Input type="number" step={0.01} min={1} value={form.MonthlyIncome} onChange={set("MonthlyIncome")} />
             </div>
         </FormGrid>
 

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Label, SectionTitle, FormGrid, Input, Select, RatingSelect } from "./FromsComponents";
 import { ResultBadge } from "./ResultBadge";
 import {CircleDollarSign} from "lucide-react";
+import type { SalaryEmployee } from "../models/interaces";
 
 
 const DEPARTMENTS = ["Research & Development", "Sales", "Human Resources"];
@@ -32,22 +33,49 @@ export const SalaryForm = () => {
 
   const set = (k: any) => (e: any) => setForm((f) => ({ ...f, [k]: isNaN(e.target.value) ? e.target.value : Number(e.target.value) || e.target.value }));
 
-  const payload = () => {
-    const { MonthlyIncome: _m, ...rest } = form;
-    return rest;
-  };
+  
 
   const handleSubmit = async () => {
     setLoading(true);
     setResult(null);
+
+    const salaryEmployee: SalaryEmployee = {
+        Age: form.Age,
+        BusinessTravel: form.BusinessTravel,
+        Department: form.Department,
+        DistanceFromHome: form.DistanceFromHome,
+        Education: form.Education,
+        EducationField: form.EducationField,
+        EnvironmentSatisfaction: form.EnvironmentSatisfaction,
+        Gender: form.Gender,
+        JobInvolvement: form.JobInvolvement,
+        JobLevel: form.JobLevel,
+        JobRole: form.JobRole,
+        JobSatisfaction: form.JobSatisfaction,
+        MaritalStatus: form.MaritalStatus,
+        NumCompaniesWorked: form.NumCompaniesWorked,
+        OverTime: form.OverTime,
+        PercentSalaryHike: form.PercentSalaryHike,
+        RelationshipSatisfaction: form.RelationshipSatisfaction,
+        StockOptionLevel: form.StockOptionLevel,
+        TotalWorkingYears: form.TotalWorkingYears,
+        TrainingTimesLastYear: form.TrainingTimesLastYear,
+        WorkLifeBalance: form.WorkLifeBalance,
+        YearsAtCompany: form.YearsAtCompany,
+        YearsInCurrentRole: form.YearsInCurrentRole,
+        YearsSinceLastPromotion: form.YearsSinceLastPromotion,
+        YearsWithCurrManager: form.YearsWithCurrManager
+    }
+
     try {
       const res = await fetch("http://localhost:8000/salary/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload()),
+        body: JSON.stringify(salaryEmployee),
       });
       const data = await res.json();
-      setResult(data.predicted_salary.toFixed(2));
+
+      setResult(data);
     } catch {
       console.log('error in fecthing results');
     } finally {
